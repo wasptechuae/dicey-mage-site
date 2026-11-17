@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Join a Duel - Dicey Mage</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:#1a0f2e;color:#f3e9c6;font-family:"Courier New",ui-monospace,monospace;display:flex;justify-content:center;padding:20px 16px 40px}
+main{width:100%;max-width:440px;text-align:center}
+h1{color:#ffcc33;font-size:28px;letter-spacing:2px;text-transform:uppercase;margin:12px 0;text-shadow:3px 3px 0 #5a2d8f}
+.card{background:#2b1850;border:4px solid #ffcc33;box-shadow:6px 6px 0 #0d0618;padding:18px 14px;margin:16px 0}
+.label{font-size:15px;color:#d9c9ff}
+.code{font-size:clamp(44px,15vw,76px);font-weight:bold;letter-spacing:.14em;color:#ffcc33;margin:10px 0 0;padding-left:.14em;word-break:break-all}
+.btn{display:block;width:100%;font:inherit;font-size:20px;font-weight:bold;padding:18px 10px;margin:12px 0;border:4px solid #ffcc33;color:#1a0f2e;background:#ffcc33;box-shadow:4px 4px 0 #0d0618;text-decoration:none;cursor:pointer;text-transform:uppercase}
+.btn.alt{background:#5a2d8f;color:#ffcc33}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #0d0618}
+.ar{direction:rtl;font-family:system-ui,"Segoe UI",Tahoma,sans-serif;border-top:3px dashed #5a2d8f;margin-top:26px;padding-top:6px}
+.ar .btn{font-family:inherit}
+.bad{color:#ff8a8a}
+</style>
+</head>
+<body>
+<main>
+<h1>Dicey Mage</h1>
+<section id="en">
+<div class="card"><div class="label" id="en-l">Your friend's Duel code</div><div class="code" id="code">------</div></div>
+<a class="btn" id="open" href="#">Open in Dicey Mage</a>
+<button class="btn alt" id="copy" type="button">Copy code</button>
+<p class="label">Don't have the app yet? Install it, then open this link again.</p>
+</section>
+<section class="ar" dir="rtl" lang="ar">
+<div class="card"><div class="label">رمز المبارزة من صديقك</div></div>
+<a class="btn" id="open-ar" href="#">افتح في Dicey Mage</a>
+<button class="btn alt" id="copy-ar" type="button">انسخ الرمز</button>
+<p class="label">ليس لديك اللعبة بعد؟ ثبّتها ثم افتح هذا الرابط مرة أخرى.</p>
+</section>
+</main>
+<script>
+(function(){
+var m=/[?&]c=([^&#]*)/.exec(location.search),raw="";
+try{raw=m?decodeURIComponent(m[1]):""}catch(e){raw=m?m[1]:""}
+var code=raw.toUpperCase().replace(/[^A-Z2-9]/g,"").slice(0,6);
+var ok=code.length===6;
+document.getElementById("code").textContent=ok?code:"??????";
+if(!ok){document.getElementById("code").className+=" bad"}
+var url="diceymage://join/"+code;
+["open","open-ar"].forEach(function(id){var a=document.getElementById(id);a.href=ok?url:"#"});
+function copy(btn,done){
+ if(!ok)return;
+ function fb(){var t=document.createElement("textarea");t.value=code;t.style.position="fixed";t.style.opacity="0";document.body.appendChild(t);t.focus();t.select();t.setSelectionRange(0,99);try{document.execCommand("copy")}catch(e){}document.body.removeChild(t);flash(btn,done)}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(code).then(function(){flash(btn,done)},fb)}else{fb()}
+}
+function flash(btn,txt){var o=btn.textContent;btn.textContent=txt;setTimeout(function(){btn.textContent=o},1500)}
+document.getElementById("copy").onclick=function(){copy(this,"Copied!")};
+document.getElementById("copy-ar").onclick=function(){copy(this,"تم النسخ!")};
+if(ok){location.href=url}
+})();
+</script>
+</body>
+</html>
